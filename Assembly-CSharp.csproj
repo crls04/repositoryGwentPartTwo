@@ -60,6 +60,7 @@
     <Compile Include="Assets\Scripts\syntaxLanguage.cs" />
     <Compile Include="Assets\Scripts\Lexico.cs" />
     <Compile Include="Assets\Scripts\cardsCompiler.cs" />
+    <Compile Include="Assets\Scripts\compilerOrientation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
