@@ -43,13 +43,20 @@ namespace cardMaker
         board
 
     }
-
+    public enum selectProperty
+    {
+        Name,
+        Faction,
+        Power,
+        Type,
+        Owner
+    }
     public class language
     {
         List<CardType> cardType = new();
         List<AttackMode> attackMode = new();
         List<SourceType> source = new();
-
+        List<selectProperty> cardCharacteristic = new();
 
         //Constructor con parametros predefinidos
         public language()
@@ -76,16 +83,16 @@ namespace cardMaker
 
         }
         //Se revisa la validez del Token
-        public TypeToken verifyValidate (string text)
+        public TypeToken verifyValidate(string text)
         {
-            if(Regex.IsMatch(text,@"^[\'][a-zA-Z' '0-9]*'"))
+            if (Regex.IsMatch(text, @"^[\'][a-zA-Z' '0-9]*'"))
             {
                 return TypeToken.String;
             }
-            else if(Regex.IsMatch(text, @"^[a-zA-Z][a-zA-Z0-9_]*$"))
+            else if (Regex.IsMatch(text, @"^[a-zA-Z][a-zA-Z0-9_]*$"))
             {
                 return TypeToken.Var;
-            
+
             }
             else if (Regex.IsMatch(text, @"^-?\d+$"))
             {
@@ -100,7 +107,7 @@ namespace cardMaker
         //Verificar que existe del tipo de carta definidio al inicio del script
         public CardType verifyCard(string type)
         {
-            foreach(CardType s in cardType)
+            foreach (CardType s in cardType)
             {
                 if (s.ToString() == type)
                 {
@@ -111,7 +118,7 @@ namespace cardMaker
         }
 
         //Verificar que existe el tipo de ataque definido al inicio del script
-        public AttackMode verifyAttack (string type)
+        public AttackMode verifyAttack(string type)
         {
             foreach (AttackMode s in attackMode)
             {
@@ -134,7 +141,19 @@ namespace cardMaker
             }
             return " ";
         }
+        public string verifySelectProperty(string type)
+        {
+            foreach (selectProperty s in source)
+            {
+                if (s.ToString() == type)
+                {
+                    return s.ToString();
+                }
+            }
+
+            return " ";
+        }
+
+
     }
-
-
 }

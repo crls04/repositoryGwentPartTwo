@@ -27,9 +27,11 @@ public class definingErrors
     public const string FailedCompilerBrace2 = "Fallo al compilar, se necesita: }";
     public const string FailedCompilerSquareBracket1 = "Fallo al compilar, se necesita: [";
     public const string FailedCompilerSquareBracket2 = "Fallo al compilar, se necesita: ]";
+    public const string FailedCompilerEffectAssign = "Fallo al compilar,  se necesita: => ";
     public const string FailedCompilerInadmissibleValue = "Fallo al compilar, valor inadmisible.";
     public const string FailedCompilerDivitionZero = "Fallo al compilar, division por cero indefinida.";
     public const string FailedCompilerStatament = "Declaracion Inadmisible.";
     public const string FailedCompilerUndefinedVar = "Fallo al compilar, variable indefinida.";
     public const string FailedCompilerNoProperty = "Fallo al compilar, la propiedad no existe o ya ha sido utilizada.";
+    public const string FiledCompilerForUndefined = "Fallo al compilar, se ha declarado for incorrectamente";
 }
