@@ -8,7 +8,7 @@ public class compilerOrientation : MonoBehaviour
 {
     public TMP_InputField Console, Output;
 
-    public void Build()
+    public void compiler()
     {
         syntax process = new();
         process.delete();
