@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\errorsLex.cs" />
     <Compile Include="Assets\Scripts\syntaxLanguage.cs" />
     <Compile Include="Assets\Scripts\Lexico.cs" />
+    <Compile Include="Assets\Scripts\cardsCompiler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
