@@ -15,7 +15,7 @@ E:/2doProjectUH/repositoryGwentPartTwo
 -logFile
 Logs/AssetImportWorker5.log
 -srvPort
-3199
+4846
 Successfully changed project path to: E:/2doProjectUH/repositoryGwentPartTwo
 E:/2doProjectUH/repositoryGwentPartTwo
 [UnityMemory] Configuration Parameters - Can be set up in boot.config
@@ -47,7 +47,7 @@ E:/2doProjectUH/repositoryGwentPartTwo
     "memorysetup-temp-allocator-size-cloud-worker=32768"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Refreshing native plugins compatible for Editor in 1252.27 ms, found 4 plugins.
+Refreshing native plugins compatible for Editor in 1671.98 ms, found 4 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2022.1.3f1 (1cedbfe38737)
 [Subsystems] Discovering subsystems at path E:/PROGRAMACION/Unity/installed/Unity 2022.1.3f1/Editor/Data/Resources/UnitySubsystems
@@ -63,45 +63,51 @@ Initialize mono
 Mono path[0] = 'E:/PROGRAMACION/Unity/installed/Unity 2022.1.3f1/Editor/Data/Managed'
 Mono path[1] = 'E:/PROGRAMACION/Unity/installed/Unity 2022.1.3f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'E:/PROGRAMACION/Unity/installed/Unity 2022.1.3f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56656
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56372
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: E:/PROGRAMACION/Unity/installed/Unity 2022.1.3f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.023365 seconds.
+Registered in 0.029100 seconds.
 Native extension for WindowsStandalone target not found
-Refreshing native plugins compatible for Editor in 484.10 ms, found 4 plugins.
+Refreshing native plugins compatible for Editor in 524.40 ms, found 4 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Mono: successfully reloaded assembly
-- Completed reload, in  5.014 seconds
+- Completed reload, in  4.600 seconds
 Domain Reload Profiling:
-	ReloadAssembly (5016ms)
-		BeginReloadAssembly (514ms)
+	ReloadAssembly (4604ms)
+		BeginReloadAssembly (489ms)
 			ExecutionOrderSort (0ms)
 			DisableScriptedObjects (0ms)
 			BackupInstance (0ms)
 			ReleaseScriptingObjects (0ms)
-			CreateAndSetChildDomain (4ms)
-		EndReloadAssembly (3721ms)
-			LoadAssemblies (504ms)
-			RebuildTransferFunctionScriptingTraits (0ms)
-			SetupTypeCache (852ms)
-				TypeCache.Initialize (841ms)
-					TypeCache.ScanAssembly (834ms)
-				ResolveRequiredComponents (10ms)
+			CreateAndSetChildDomain (5ms)
+		EndReloadAssembly (3367ms)
+			LoadAssemblies (483ms)
+			RebuildTransferFunctionScriptingTraits (1ms)
+			SetupTypeCache (780ms)
+				TypeCache.Initialize (776ms)
+					TypeCache.ScanAssembly (767ms)
+				ResolveRequiredComponents (5ms)
 			ReleaseScriptCaches (0ms)
-			RebuildScriptCaches (248ms)
-			SetupLoadedEditorAssemblies (2239ms)
+			RebuildScriptCaches (235ms)
+			SetupLoadedEditorAssemblies (1999ms)
 				LogAssemblyErrors (0ms)
-				InitializePlatformSupportModulesInManaged (56ms)
-				SetLoadedEditorAssemblies (49ms)
-				RefreshPlugins (485ms)
-				BeforeProcessingInitializeOnLoad (9ms)
-				ProcessInitializeOnLoadAttributes (1195ms)
-				ProcessInitializeOnLoadMethodAttributes (444ms)
+				InitializePlatformSupportModulesInManaged (60ms)
+				SetLoadedEditorAssemblies (45ms)
+				RefreshPlugins (525ms)
+				BeforeProcessingInitializeOnLoad (8ms)
+				ProcessInitializeOnLoadAttributes (1033ms)
+				ProcessInitializeOnLoadMethodAttributes (326ms)
 				AfterProcessingInitializeOnLoad (0ms)
-				EditorAssembliesLoaded (2ms)
+				EditorAssembliesLoaded (1ms)
 			ExecutionOrderSort2 (0ms)
 			AwakeInstancesAfterBackupRestoration (0ms)
 Platform modules already initialized, skipping
 Registering precompiled user dll's ...
-Registered in 0.042178 seconds.
+Registered in 0.032020 seconds.
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory doesn't match image E:\2doProjectUH\repositoryGwentPartTwo\Library\PackageCache\com.unity.visualscripting@1.7.8\Editor\VisualScripting.Core\Dependencies\YamlDotNet\Unity.VisualScripting.YamlDotNet.dll
+Symbol file LoadedFromMemory doesn't match image E:\2doProjectUH\repositoryGwentPartTwo\Library\PackageCache\com.unity.visualscripting@1.7.8\Editor\VisualScripting.Core\Dependencies\DotNetZip\Unity.VisualScripting.IonicZip.dll
+Native extension for WindowsStandalone target not found
+Refreshing native plugins compatible for Editor in 458.43 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
