@@ -1112,7 +1112,281 @@ namespace cardMaker
             return " ";
         }
 
-        
+        //Metodo definicion effecto
+        private void EffectCreate(string[] Code, int Nline)
+        {
+            string Name = " ";
+            Dictionary<string, string> Params = new();
+            int Line = Nline - 1;
+
+            while (Line < Code.Length)
+            {
+                if (Regex.IsMatch(Code[Line], @"^Name|<#definition\s+['{']*;$") && findCoincidence(Code[Line], ":") && finalLine(Code[Line], ','))
+                {
+                    string[] sintax = Code[Line].Split(':', ',');
+                    if (desarrollo.verifyValidate(sintax[1]) == TypeToken.Var) sintax[1] = VarValue(VarString, destroySpace(sintax[1]));
+
+                    if (desarrollo.verifyValidate(sintax[1]) == TypeToken.String) sintax[1] = createString(destroySpace(sintax[1]), Nline);
+
+                    if (sintax[1] != " ") Name = sintax[1];
+                }
+
+                if (Regex.IsMatch(Code[Line], @"^Params|<#definition\s+['{']*;$") && findCoincidence(Code[Line], ":") && finalLine(Code[Line], '{'))
+                {
+                    Line++;
+                    Nline++;
+                    while (!Regex.IsMatch(Code[Line], @"^}|<#End\s+['{']*;$"))
+                    {
+                        string[] sintax = Code[Line].Split(':', ',');
+                        Params[sintax[0]] = destroySpace(sintax[1]);
+                        Line++;
+                        Nline++;
+                    }
+                }
+
+                if (Regex.IsMatch(Code[Line], @"^Action|<#definition\s+['{']*;$") && findCoincidence(Code[Line], ":") && finalLine(Code[Line], '{'))
+                {
+                    if (findCoincidence(Code[Line], "=>"))
+                    {
+                        string[] sintax = Code[Line].Split(':', '=');
+                        sintax = sintax[1].Split('(', ',', ')');
+                        if (destroySpace(sintax[1]) == "targets" && destroySpace(sintax[2]) == "context")
+                        {
+                            Nline++;
+                            Line++;
+                            if (Name != " ") VerificateEffect(Code, Params, Name, Nline);
+                            else errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerStatament));
+                        }
+                        else errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerStatament));
+                    }
+                    else errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerEffectAssign));
+                }
+                Line++;
+                Nline++;
+            }
+
+        }
+
+        //Metodo para comparaciones
+        private bool Compare(string Code, int Nline)
+        {
+            string[] numbers;
+            if (findCoincidence(Code, "<="))
+            {
+                numbers = Code.Split("<=");
+                numbers[0] = OperationAritmetic(numbers[0], Nline);
+                numbers[2] = OperationAritmetic(numbers[2], Nline);
+                if (numbers[0] != " " && numbers[2] != " ")
+                {
+                    if (float.Parse(numbers[0]) == float.Parse(numbers[2])) return true;
+                    else if (float.Parse(numbers[0]) < float.Parse(numbers[2])) return true;
+                    else return false;
+                }
+            }
+            else if (findCoincidence(Code, ">="))
+            {
+                numbers = Code.Split("<=");
+                numbers[0] = OperationAritmetic(numbers[0], Nline);
+                numbers[2] = OperationAritmetic(numbers[2], Nline);
+                if (numbers[0] != " " && numbers[2] != " ")
+                {
+                    if (float.Parse(numbers[0]) == float.Parse(numbers[2])) return true;
+                    else if (float.Parse(numbers[0]) > float.Parse(numbers[2])) return true;
+                    else return false;
+                }
+            }
+            else if (findCoincidence(Code, ">"))
+            {
+                numbers = Code.Split('>', '=');
+                numbers[0] = OperationAritmetic(numbers[0], Nline);
+                numbers[2] = OperationAritmetic(numbers[2], Nline);
+                if (numbers[0] != " " && numbers[2] != " ")
+                {
+                    if (float.Parse(numbers[0]) > float.Parse(numbers[2])) return true;
+                    else return false;
+                }
+            }
+            else if (findCoincidence(Code, "<"))
+            {
+                numbers = Code.Split('>', '=');
+                numbers[0] = OperationAritmetic(numbers[0], Nline);
+                numbers[2] = OperationAritmetic(numbers[2], Nline);
+                if (numbers[0] != " " && numbers[2] != " ")
+                {
+                    if (float.Parse(numbers[0]) < float.Parse(numbers[2])) return true;
+                    else return false;
+                }
+            }
+            return false;
+        }
+
+        //Metodo para verificar parametros de effecto
+        private void VerificateEffect(string[] Code, Dictionary<string, string> Vars, string Name, int Nline)
+        {
+            string[] Action = new string[Code.Length - Nline];
+            Array.Copy(Code, Nline - 1, Action, 0, Code.Length - Nline);
+            string Ordenes = "";
+            List<string> Local_Param_Cards = new();
+            List<string> Local_Param_List = new();
+            List<string> Local_Param_Property = new();
+
+            Local_Param_Cards.Add("");
+
+            //Eliminar espacios en blanco
+            for (int i = 0; i < Action.Length; i++)
+            {
+                Action[i] = destroySpace(Action[i]);
+            }
+
+            //Revision sintactica en la declaracion de efectos
+            foreach (string code in Action)
+            {
+                //Revision de instruccion for
+                if (Regex.IsMatch(code, @"^for|<#definition\s+['{']*;$"))
+                {
+                    string[] forIs = code.Split(' ');
+                    if (destroySpace(forIs[0]) == "for" && destroySpace(forIs[1]) == "target" && destroySpace(forIs[2]) == "in" && destroySpace(forIs[3]) == "targets" && destroySpace(forIs[4]) == "{")
+                    {
+                        Ordenes += "for-";
+                    }
+                    else errors.Add(new compilerErrors(Nline, definingErrors.FiledCompilerForUndefined));
+                }
+
+                //Revision de instruccion while
+                else if (Regex.IsMatch(code, @"^while|<#definition\s+['{']*;$") && findCoincidence(code, "(") && findCoincidence(code, ")"))
+                {
+                    Ordenes += "while-";
+                }
+
+                //Verificar si se utiliza  o asigna una propiedad de target o context
+                else if (findCoincidence(code, "."))
+                {
+                    //Verificar una asignacion
+                    if (findCoincidence(code, "=") && finalLine(code, ';'))
+                    {
+                        string[] assing = code.Split('=');
+                        string var = destroySpace(assing[0]);
+                        if (desarrollo.verifyValidate(var) == TypeToken.Var)
+                        {
+                            assing = assing[1].Split('.', ';');
+
+                            //Asignacion Pop
+                            if (assing.Length == 4 && destroySpace(assing[0]) == "context")
+                            {
+                                if (destroySpace(assing[2]) == "Pop()")
+                                {
+                                    Local_Param_Cards.Add(var);
+                                    Ordenes += "Pop|" + var + "-";
+                                }
+
+                                //Falta definir Find
+                            }
+                            //Asignacion de una lista
+                            else if (assing.Length == 3 && validateContext(destroySpace(assing[1])) != " ")
+                            {
+                                //Definir Assignacion
+                                Local_Param_List.Add(var);
+                                Ordenes += "ListAdd|" + var + "-";
+                            }
+                            //Asignacion de alguna propiedad target
+                            else if (assing.Length == 3 && desarrollo.verifySelectProperty(destroySpace(assing[1])) != " " && destroySpace(assing[0]) == "target" && Ordenes.Contains("for"))
+                            {
+                                //Definir Asignacion
+                                Local_Param_Property.Add(var);
+                                Ordenes += "PropAdd|" + var + "-";
+                            }
+                        }
+                    }
+
+                    //Verificar llamada a una funcion de context
+                    else if ((findCoincidence(code, "(") && findCoincidence(code, ")") || findCoincidence(code, "++") || findCoincidence(code, "--")) && findCoincidence(code, ".") && findCoincidence(code, ";"))
+                    {
+                        string[] assign = code.Split('.', ';');
+                        string function = " ";
+                        string parametro = "";
+                        if (assign[1].Split('(', ')').Length >= 2) parametro = (destroySpace(assign[1].Split('(', ')')[1]));
+                        //Funciones directas del context
+                        if (Local_Param_Cards.Contains(parametro) && assign.Length == 4 && destroySpace(assign[0]) == "context") function = functionContext(assign, parametro);
+                        else if (assign.Length == 4 && destroySpace(assign[0]) == "context") function = functionContext(assign);
+                        //Funciones de una variable que contienen una lista del context
+                        else if (Local_Param_Cards.Contains(parametro) && assign.Length == 3 && Local_Param_List.Contains(destroySpace(assign[0]))) function = functionContext(assign, parametro, 1);
+                        else if (assign.Length == 3 && Local_Param_List.Contains(destroySpace(assign[0]))) function = functionContext(assign, value: 1);
+                        //Funciones de operador doble con un target.Power
+                        if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && destroySpace(assign[1]) == "Power++") function = "TargetPowerSum";
+                        else if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && destroySpace(assign[1]) == "Power--") function = "TargetPowerRest";
+                        //Leer instrucciones
+                        if (function != " ") Ordenes += function + "-";
+                        else errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerStatament));
+                    }
+                }
+
+                Nline++;
+            }
+
+            string vars = "";
+            foreach (string s in Vars.Keys)
+            {
+                vars += s + "|" + Vars[s] + "^";
+            }
+            if (Ordenes != " ")
+            {
+                string save = createString(Name, Nline) + "&" + vars + "&" + Ordenes;
+                StreamWriter sw = new(Application.dataPath + "/Resources/Effects/" + createString(Name, Nline) + ".txt");
+                sw.Write(save);
+                sw.Close();
+            }
+            else errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerStatament));
+        }
+
+        //Metodo para verificar listar existentes del context en una linea
+        public string validateContext(string Code)
+        {
+            Code = destroySpace(Code);
+            if (Code == "TriggerPlayer") return Code;
+            if (Code == "Hand") return Code;
+            if (Code == "Deck") return Code;
+            if (Code == "Graveyard") return Code;
+            if (Code == "Field") return Code;
+            if (Code == "Board") return Code;
+            if (findCoincidence(Code, "(") && findCoincidence(Code, ")"))
+            {
+                string[] ofPlayer = Code.Split('(', ')');
+                if (findCoincidence(destroySpace(ofPlayer[0]), "DeckOfPlayer"))
+                {
+                    if (destroySpace(ofPlayer[1]) == "context.TriggerPlayer") return "Deck";
+                    else if (desarrollo.verifyValidate(destroySpace(ofPlayer[1])) == TypeToken.Var) return ofPlayer[1];
+                }
+                if (findCoincidence(destroySpace(ofPlayer[0]), "GraveyardOfPlayer"))
+                {
+                    if (destroySpace(ofPlayer[1]) == "context.TriggerPlayer") return "Graveyard";
+                    else if (desarrollo.verifyValidate(destroySpace(ofPlayer[1])) == TypeToken.Var) return ofPlayer[1];
+                }
+                if (findCoincidence(destroySpace(ofPlayer[0]), "HandOfPlayer"))
+                {
+                    if (destroySpace(ofPlayer[1]) == "context.TriggerPlayer") return "Hand";
+                    else if (desarrollo.verifyValidate(destroySpace(ofPlayer[1])) == TypeToken.Var) return ofPlayer[1];
+                }
+                if (findCoincidence(destroySpace(ofPlayer[0]), "FieldOfPlayer"))
+                {
+                    if (destroySpace(ofPlayer[1]) == "context.TriggerPlayer") return "Field";
+                    else if (desarrollo.verifyValidate(destroySpace(ofPlayer[1])) == TypeToken.Var) return ofPlayer[1];
+                }
+            }
+            return " ";
+        }
+
+        //Determinar funcion del context
+        private string functionContext(string[] var, string param = " ", int value = 2)
+        {
+            if (destroySpace(var[value]) == "Pop()") return "Pop";
+            if (destroySpace(var[value]) == "Remove(" + param + ")") return "Remove|" + param;
+            if (destroySpace(var[value]) == "Push(" + param + ")") return "Push|" + param; ;
+            if (destroySpace(var[value]) == "Add(" + param + ")") return "Add|" + param;
+            if (destroySpace(var[value]) == "SendBottom(" + param + ")") return "SendBottom|" + param;
+            if (destroySpace(var[value]) == "Shufle()") return "Shuffle";
+
+            return " ";
+        }
 
         //funcion implementada para eliminar todo lo que se introduce en el compilador
         public void delete()
