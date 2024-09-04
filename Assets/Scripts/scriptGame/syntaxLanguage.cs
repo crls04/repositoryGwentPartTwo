@@ -902,7 +902,7 @@ namespace cardMaker
             for (int f = 0; f < lines.Length; f++)
             {
                 lines[f] = destroySpace(lines[f]);
-
+                
             }
 
             foreach (string line in lines)

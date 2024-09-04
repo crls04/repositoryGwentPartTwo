@@ -13,7 +13,8 @@ public class cardSupremus : MonoBehaviour
     public float Power;
     public CardType Type;
     public List<AttackMode> Attack;
-    public RawImage Imag_Des,Text_Des_Img;
+    public RawImage Imag_Des;
+    public GameObject Text_Des_Img;
     public TextMeshProUGUI Text_Des;
     public Deck Deck;
     public bool invoke,effects = false;
@@ -23,9 +24,9 @@ public class cardSupremus : MonoBehaviour
     public bool InEscena = true;
     private void Start()
     {
-        Imag_Des = GameObject.FindGameObjectWithTag("Img_Des").GetComponent<RawImage>();
-        Text_Des_Img = GameObject.FindGameObjectWithTag("Img_DesText").GetComponent<RawImage>();
-        Text_Des = GameObject.FindGameObjectWithTag("Text_Des").GetComponent<TextMeshProUGUI>();
+        Imag_Des = GameObject.FindGameObjectWithTag("imageCard").GetComponent<RawImage>();
+        Text_Des_Img = GameObject.FindGameObjectWithTag("imageDescription");
+        Text_Des = GameObject.FindGameObjectWithTag("textDescription").GetComponent<TextMeshProUGUI>();
     }
 
     private void Update()
