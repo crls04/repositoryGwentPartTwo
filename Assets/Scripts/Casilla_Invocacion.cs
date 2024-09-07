@@ -13,7 +13,7 @@ public class Casilla_Invocacion : MonoBehaviour
 
     private void Start()
     {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        gameManager = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
     }
     public void Invocar()
     {
@@ -25,7 +25,7 @@ public class Casilla_Invocacion : MonoBehaviour
             {
                 if (att == AttackMode)
                 {                   
-                    if (Deck.Card_Invoke.GetComponent<cardSupremus>().Type == CardType.Oro || Deck.Card_Invoke.GetComponent<cardSupremus>().Type == CardType.Plata && Deck.Field[casilla] == null)
+                    if ((Deck.Card_Invoke.GetComponent<cardSupremus>().Type == CardType.Oro || Deck.Card_Invoke.GetComponent<cardSupremus>().Type == CardType.Plata) && casilla <= 11 && Deck.Field[casilla] == null)
                     {
                         Deck.Card_Invoke.transform.position = transform.position;
                         Deck.Card_Invoke.GetComponent<cardSupremus>().invoke = true;

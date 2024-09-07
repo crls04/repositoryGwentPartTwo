@@ -9,17 +9,24 @@ public class Deck : MonoBehaviour
     public GameObject[] Hand_Pos = new GameObject[10];
     public GameObject[] Field_Pos = new GameObject[12];
     public GameObject[] Aum_Pos = new GameObject[3];
+    public GameObject Graveyard_Pos;
     public GameObject[] Aum = new GameObject[3];
     public GameObject[] Hand = new GameObject[10];
     public GameObject[] Field = new GameObject[12];
-    public GameObject[] Graveyard = new GameObject[50];
+    public List<GameObject> Graveyard;
     public GameObject Field_leader;
     public GameObject Card_Invoke;
     public GameObject Leader;
 
     private int carta_actual_deck = 0;
 
-
+    private void Update()
+    {
+        for (int i = 0; i < Graveyard.Count; i++)
+        {
+            if (Graveyard[i] != null) Graveyard[i].transform.position = Graveyard_Pos.transform.position;
+        }
+    }
     //Funcion barajear deck
     public GameObject[] Barajear(GameObject[] Mazo)
     {

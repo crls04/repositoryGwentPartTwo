@@ -21,7 +21,7 @@ public class cardSupremus : MonoBehaviour
     public effect effect;
     public int players;
     public SkeletonCard Card;
-    public bool InEscena = true;
+    public Sprite sprite;
     private void Start()
     {
         Imag_Des = GameObject.FindGameObjectWithTag("imageCard").GetComponent<RawImage>();
@@ -31,14 +31,13 @@ public class cardSupremus : MonoBehaviour
 
     private void Update()
     {
-        if(!InEscena)
+        if (players == GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>().Turn || invoke || CardType.Lider == Type) gameObject.GetComponent<SpriteRenderer>().sprite = sprite;
+        else gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Images/Random");
+
+        if (invoke && !effects && effect != null)
         {
-            Destroy(gameObject);
-        }
-        if(invoke && !effects && effect != null)
-        {
-            GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().DeterminateContext();
-            effect.Action(GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().context);
+            GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>().DeterminateContext();
+            effect.Action();
             effects = true;
         }
     }
@@ -55,21 +54,21 @@ public class cardSupremus : MonoBehaviour
         Card = carta;
 
         gameObject.name = Name;
-        gameObject.transform.localScale = new Vector3(0.0784518644f, 0.0814131051f, 1);
+        gameObject.transform.localScale = new Vector3(0.11587f, 0.11686f, 1);
 
         gameObject.AddComponent<SpriteRenderer>();
         gameObject.AddComponent<BoxCollider2D>();
 
         if(File.Exists(Application.dataPath + "/Resources/Images/" + Name + ".jpg"))
         {
-            gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Images/" + Name);
+            sprite = Resources.Load<Sprite>("Images/" + Name);
         }
         else
         {
-            gameObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Images/Random");
+            sprite = Resources.Load<Sprite>("Images/Random");
         }
         gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
-        gameObject.GetComponent<BoxCollider2D>().size = new Vector2(9.63649f, 12.67119f);
+        gameObject.GetComponent<BoxCollider2D>().size = new Vector2(8.03f, 10.49f);
     }
 
     private void OnMouseEnter()
@@ -93,6 +92,7 @@ public class cardSupremus : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Deck.Select_Invoke(gameObject);
+        if (!GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>().initial1 && players == 1)Deck.Select_Invoke(gameObject);
+        if (!GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>().initial2 && players == 2)Deck.Select_Invoke(gameObject);
     }
 }

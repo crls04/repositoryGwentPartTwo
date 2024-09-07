@@ -49,7 +49,7 @@ namespace cardMaker
         }
 
         //metodo para verificar el final de una linea
-        private bool finalLine(string Code, char end)
+        public bool finalLine(string Code, char end)
         {
             if (Code.Length >= 1 && Code[^1] == end)
             {
@@ -68,7 +68,7 @@ namespace cardMaker
         }
 
         //metodo que devuelve valor de una variable tipo numero y verificar si existe
-        private string VarValue(Dictionary<string, string> Variables, string Var)
+        public string VarValue(Dictionary<string, string> Variables, string Var)
         {
             foreach (var word in Variables.Keys)
             {
@@ -208,29 +208,56 @@ namespace cardMaker
         }
 
         //Metodo para encontrar un operador doble en una linea
-        public bool IncOrDec(string code)
+        public string IncOrDec(string code)
 
         {
             string[] num;
             if (findCoincidence(code, "++"))
             {
                 num = code.Split("++");
+
                 if (VarNumber.ContainsKey(destroySpace(num[0])))
                 {
                     VarNumber[destroySpace(num[0])] = (int.Parse(VarNumber[destroySpace(num[0])]) + 1).ToString();
-                    return true;
+                    return destroySpace(num[0]);
                 }
             }
             else if (findCoincidence(code, "--"))
             {
-                num = code.Split("++");
+                num = code.Split("--");
                 if (VarNumber.ContainsKey(destroySpace(num[0])))
                 {
                     VarNumber[destroySpace(num[0])] = (int.Parse(VarNumber[destroySpace(num[0])]) - 1).ToString();
-                    return true;
+                    return destroySpace(num[0]);
                 }
             }
-            return false;
+            else if (findCoincidence(code, "+="))
+            {
+                num = code.Split("+=");
+                if (VarNumber.ContainsKey(destroySpace(num[0])))
+                {
+                    if (desarrollo.verifyValidate(destroySpace(num[1])) == TypeToken.Var) num[1] = VarValue(VarNumber, num[1]);
+                    if (desarrollo.verifyValidate(destroySpace(num[1])) == TypeToken.Number)
+                    {
+                        VarNumber[destroySpace(num[0])] = (int.Parse(VarValue(VarNumber, num[0])) + int.Parse(num[1])).ToString();
+                        return destroySpace(num[0]);
+                    }
+                }
+            }
+            else if (findCoincidence(code, "-="))
+            {
+                num = code.Split("-=");
+                if (VarNumber.ContainsKey(destroySpace(num[0])))
+                {
+                    if (desarrollo.verifyValidate(destroySpace(num[1])) == TypeToken.Var) num[1] = VarValue(VarNumber, num[1]);
+                    if (desarrollo.verifyValidate(destroySpace(num[1])) == TypeToken.Number)
+                    {
+                        VarNumber[destroySpace(num[0])] = (int.Parse(VarValue(VarNumber, num[0])) - int.Parse(num[1])).ToString();
+                        return destroySpace(num[0]);
+                    }
+                }
+            }
+            return " ";
         }
 
         //funcion creada para la implementacion de las operaciones aritmeticas(suma, resta, multiplicacion, divsion, potencia)
@@ -239,7 +266,7 @@ namespace cardMaker
             string[] sum, rest, mul, div, pot;
             Code = destroySpace(Code);
             bool number;
-
+            string incremento = IncOrDec(Code);
             //se verifica si es un numero
             if (desarrollo.verifyValidate(Code) == TypeToken.Number)
             {
@@ -247,9 +274,9 @@ namespace cardMaker
             }
 
             //Verificar operador doble
-            else if (IncOrDec(Code))
+            else if (IncOrDec(Code) != " ")
             {
-                return VarValue(VarNumber, Code);
+                return VarValue(VarNumber, incremento);
             }
 
             //se verifica si es una variable
@@ -472,7 +499,7 @@ namespace cardMaker
         }
 
         //funcion empleada para crear una variable de tipo number
-        private void creatingNumberVariable(string Line, int Nline)
+        public void creatingNumberVariable(string Line, int Nline)
         {
             if (finalLine(Line, ';'))
             {
@@ -508,7 +535,7 @@ namespace cardMaker
         }
 
         //funcion empleada para crear una variable de tipo bool
-        private void CreateBoolVar(string Line, int Nline)
+        public void CreateBoolVar(string Line, int Nline)
         {
             if (finalLine(Line, ';'))
             {
@@ -549,7 +576,7 @@ namespace cardMaker
         }
 
         //funcion implementada para poder definir una crata con todas sus caracterisiticas( tipo, poder, etc)
-        private void CardCreate(string[] Code, int Nline)
+        public void CardCreate(string[] Code, int Nline)
         {
             string Type = " ";
             string Name = " ";
@@ -681,7 +708,7 @@ namespace cardMaker
         }
 
         //Metodo para guardar carta
-        private void SaveCard(string Faction, string randomVar, string decks)
+        public void SaveCard(string Faction, string randomVar, string decks)
         {
             StreamWriter sw = new(Application.dataPath + "/Resources/Decks/" + Faction + ".txt");
             if (!findCoincidence(decks, Faction))
@@ -696,7 +723,7 @@ namespace cardMaker
         }
 
         //Metodo para verificar parametros de carta
-        private string VerificateCard(string Code, int Nline)
+        public string VerificateCard(string Code, int Nline)
         {
             string[] sintax;
             if (finalLine(Code, ','))
@@ -936,7 +963,7 @@ namespace cardMaker
                 }
 
                 //Verificacion de operador doble 
-                else if (IncOrDec(line)) continue;
+                else if (IncOrDec(line) != " ") continue;
 
                 //se verifica si hubo errores en la iteracion
                 if (errors.Count != 0)
@@ -948,7 +975,7 @@ namespace cardMaker
         }
 
         //Metodo para verificar OnActivation
-        private string VerificateOnActivation(string[] Code, int Nline)
+        public string VerificateOnActivation(string[] Code, int Nline)
         {
             bool cierre = false;
             string[] OnActive = new string[3];
@@ -1082,7 +1109,7 @@ namespace cardMaker
                     }
                     if (source != "" && predicate != "")
                     {
-                        OnActive[2] = source + "." + single + "." + predicate;
+                        OnActive[2] = source + "." + single + "." + predicate + ".";
                     }
                 }
 
@@ -1117,7 +1144,7 @@ namespace cardMaker
         }
 
         //Metodo definicion effecto
-        private void EffectCreate(string[] Code, int Nline)
+        public void EffectCreate(string[] Code, int Nline)
         {
             string Name = " ";
             Dictionary<string, string> Params = new();
@@ -1177,63 +1204,75 @@ namespace cardMaker
             string[] numbers;
             if (findCoincidence(Code, "<="))
             {
+
                 numbers = Code.Split("<=");
                 numbers[0] = OperationAritmetic(numbers[0], Nline);
-                numbers[2] = OperationAritmetic(numbers[2], Nline);
-                if (numbers[0] != " " && numbers[2] != " ")
+                numbers[1] = OperationAritmetic(numbers[1], Nline);
+                if (numbers[0] != " " && numbers[1] != " ")
                 {
-                    if (float.Parse(numbers[0]) == float.Parse(numbers[2])) return true;
-                    else if (float.Parse(numbers[0]) < float.Parse(numbers[2])) return true;
+                    if (float.Parse(numbers[0]) <= float.Parse(numbers[1])) return true;
                     else return false;
                 }
             }
             else if (findCoincidence(Code, ">="))
             {
-                numbers = Code.Split("<=");
+                numbers = Code.Split(">=");
                 numbers[0] = OperationAritmetic(numbers[0], Nline);
-                numbers[2] = OperationAritmetic(numbers[2], Nline);
+                numbers[1] = OperationAritmetic(numbers[1], Nline);
                 if (numbers[0] != " " && numbers[2] != " ")
                 {
-                    if (float.Parse(numbers[0]) == float.Parse(numbers[2])) return true;
-                    else if (float.Parse(numbers[0]) > float.Parse(numbers[2])) return true;
+                    if (float.Parse(numbers[0]) >= float.Parse(numbers[2])) return true;
                     else return false;
                 }
             }
             else if (findCoincidence(Code, ">"))
             {
-                numbers = Code.Split('>', '=');
+                numbers = Code.Split('>');
                 numbers[0] = OperationAritmetic(numbers[0], Nline);
-                numbers[2] = OperationAritmetic(numbers[2], Nline);
-                if (numbers[0] != " " && numbers[2] != " ")
+                numbers[1] = OperationAritmetic(numbers[1], Nline);
+                if (numbers[0] != " " && numbers[1] != " ")
                 {
-                    if (float.Parse(numbers[0]) > float.Parse(numbers[2])) return true;
+                    if (float.Parse(numbers[0]) > float.Parse(numbers[1])) return true;
                     else return false;
                 }
             }
             else if (findCoincidence(Code, "<"))
             {
-                numbers = Code.Split('>', '=');
+                numbers = Code.Split('<');
                 numbers[0] = OperationAritmetic(numbers[0], Nline);
-                numbers[2] = OperationAritmetic(numbers[2], Nline);
-                if (numbers[0] != " " && numbers[2] != " ")
+                numbers[1] = OperationAritmetic(numbers[1], Nline);
+                if (numbers[0] != " " && numbers[1] != " ")
                 {
-                    if (float.Parse(numbers[0]) < float.Parse(numbers[2])) return true;
+                    if (float.Parse(numbers[0]) < float.Parse(numbers[1])) return true;
+                    else return false;
+                }
+            }
+            else if (findCoincidence(Code, "=="))
+            {
+                numbers = Code.Split("==");
+                numbers[0] = OperationAritmetic(numbers[0], Nline);
+                numbers[1] = OperationAritmetic(numbers[1], Nline);
+                if (numbers[0] != " " && numbers[1] != " ")
+                {
+                    if (float.Parse(numbers[0]) == float.Parse(numbers[1])) return true;
                     else return false;
                 }
             }
             return false;
         }
 
-        //Metodo para verificar parametros de effecto
         private void VerificateEffect(string[] Code, Dictionary<string, string> Vars, string Name, int Nline)
         {
-            string[] Action = new string[Code.Length - Nline];
-            Array.Copy(Code, Nline - 1, Action, 0, Code.Length - Nline);
+            string[] Action = new string[Code.Length - Nline + 1];
+            Array.Copy(Code, Nline - 1, Action, 0, Code.Length - Nline + 1);
             string Ordenes = "";
+            string function = " ";
             List<string> Local_Param_Cards = new();
-            List<string> Local_Param_List = new();
-            List<string> Local_Param_Property = new();
-
+            Dictionary<string, string> Local_Param_List = new();
+            Dictionary<string, string> Local_Param_Property = new();
+            bool ActionCierre = false;
+            bool EffectCierre = false;
+            bool ForCierre = true;
             Local_Param_Cards.Add("");
 
             //Eliminar espacios en blanco
@@ -1251,16 +1290,27 @@ namespace cardMaker
                     string[] forIs = code.Split(' ');
                     if (destroySpace(forIs[0]) == "for" && destroySpace(forIs[1]) == "target" && destroySpace(forIs[2]) == "in" && destroySpace(forIs[3]) == "targets" && destroySpace(forIs[4]) == "{")
                     {
-                        Ordenes += "for-";
+                        Ordenes += "for|Source-";
+                        ForCierre = false;
                     }
-                    else errors.Add(new compilerErrors(Nline, definingErrors.FiledCompilerForUndefined));
+                    else errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerUndefinedVar));
                 }
 
                 //Revision de instruccion while
                 else if (Regex.IsMatch(code, @"^while|<#definition\s+['{']*;$") && findCoincidence(code, "(") && findCoincidence(code, ")"))
                 {
-                    Ordenes += "while-";
+                    string[] par = code.Split('(', ')');
+                    Ordenes += "while|" + par[1] + "-";
                 }
+
+                //Verificacion de declaracion de un tipo String
+                else if (Regex.IsMatch(code, @"^string|<#texto\s+[a-z](1,15)(\s+:\s+[a-z](1,15)')*;$")) Ordenes += "StrVar|Source|" + code + "-";
+
+                //Verificacion de declaracion de un tipo Number
+                else if (Regex.IsMatch(code, @"^number|<#real\s+[a-z](1,15)(\s+:\s+\d(0,32000))*;$")) Ordenes += "NumVar|Source|" + code + "-";
+
+                //Verificacion de declaracion bool 
+                else if (Regex.IsMatch(code, @"^bool|<#boolean\s+[a-z](1,15)(\s+:\s+(true|false))*;$")) Ordenes += "BoolVar|Source|" + code + "-";
 
                 //Verificar si se utiliza  o asigna una propiedad de target o context
                 else if (findCoincidence(code, "."))
@@ -1277,65 +1327,111 @@ namespace cardMaker
                             //Asignacion Pop
                             if (assing.Length == 4 && destroySpace(assing[0]) == "context")
                             {
-                                if (destroySpace(assing[1]) == "Pop()" && Local_Param_List.Contains(assing[1]))
+                                if (destroySpace(assing[2]) == "Pop()" && validateContext(assing[1]) != " ")
                                 {
                                     Local_Param_Cards.Add(var);
-                                    Ordenes += "Pop|" + assing[1] + "|" + var + "-";
+                                    function = "Pop|" + assing[1] + "|" + var + "|";
                                 }
-                                if (destroySpace(assing[2]) == "Find()" && Local_Param_List.Contains(destroySpace(assing[0])))
+                            }
+                            //Asignacion Find
+                            if (findCoincidence(code, "Find") && findCoincidence(code, "(") && findCoincidence(code, ")") && findCoincidence(code, "unit.") && findCoincidence(code, "==") && validateContext(assing[1]) != " ")
+                            {
+                                string[] find = code.Split('(', ')');
+                                Local_Param_Cards.Add(var);
+                                function = "Find|" + assing[1] + "|" + var + "|" + find[1].Split("unit.")[1];
+                            }
+                            //Asignacion Pop desde una lista asignada
+                            else if (assing.Length == 3 && Local_Param_List.ContainsKey(assing[0]))
+                            {
+                                if (destroySpace(assing[1]) == "Pop()" && Local_Param_List.ContainsKey(assing[0]))
                                 {
                                     Local_Param_Cards.Add(var);
-                                    Ordenes += "Find|" + assing[1] + "|" + var + "-";
+                                    function = "Pop|" + Local_Param_List[assing[1]] + "|" + var + "|";
+                                }
+                                if (findCoincidence(code, "Find") && findCoincidence(code, "(") && findCoincidence(code, ")") && findCoincidence(code, "unit.") && findCoincidence(code, "==") && Local_Param_List.ContainsKey(destroySpace(assing[0])))
+                                {
+                                    string[] find = code.Split('(', ')');
+                                    Local_Param_Cards.Add(var);
+                                    function = "Find|" + assing[1] + "|" + var + "|" + find[1].Split("unit.")[1];
                                 }
                             }
                             //Asignacion de una lista
-                            else if (assing.Length == 3 && validateContext(destroySpace(assing[1])) != " ")
+                            else if (assing.Length > 3 && (validateContext(assing[1] + "." + assing[2]) != " " || (Local_Param_Property.ContainsKey(assing[1] + "." + assing[2]) && validateContext(Local_Param_Property[assing[1] + "." + assing[2]]) != " ")))
                             {
                                 //Definir Assignacion
-                                Local_Param_List.Add(var);
-                                Ordenes += "ListAdd|" + var + "-";
+                                if (Local_Param_Property.ContainsKey(assing[1] + "." + assing[2])) Local_Param_List[var] = validateContext(Local_Param_Property[assing[1] + "." + assing[2]]);
+                                else Local_Param_List[var] = validateContext(assing[1] + "." + assing[2]);
+                                function = "ListAdd|Source";
+
+                            }
+                            //Asignacion de una lista sin context.TriggerPlayer
+                            else if (assing.Length == 3 && (validateContext(assing[1]) != " " || (Local_Param_Property.ContainsKey(assing[1] + assing[2]) && validateContext(Local_Param_Property[assing[1]]) != " ")))
+                            {
+                                //Definir Assignacion
+                                if (Local_Param_Property.ContainsKey(assing[1])) Local_Param_List[var] = validateContext(Local_Param_Property[assing[1]]);
+                                else Local_Param_List[var] = validateContext(assing[1]);
+                                function = "ListAdd|Source";
                             }
                             //Asignacion de alguna propiedad target
-                            else if (assing.Length == 3 && desarrollo.verifySelectProperty(destroySpace(assing[1])) != " " && destroySpace(assing[0]) == "target" && Ordenes.Contains("for"))
+                            else if (assing.Length == 3 && destroySpace(assing[1]) == "Owner" && destroySpace(assing[0]) == "target" && Ordenes.Contains("for"))
                             {
                                 //Definir Asignacion
-                                Local_Param_Property.Add(var);
-                                Ordenes += "PropAdd|" + var + "-";
+                                Local_Param_Property[var] = "context.TriggerPlayer";
                             }
                         }
                     }
 
-                    //Verificar llamada a una funcion de context
-                    else if ((findCoincidence(code, "(") && findCoincidence(code, ")") || findCoincidence(code, "++") || findCoincidence(code, "--")) && findCoincidence(code, ".") && findCoincidence(code, ";"))
+                    //Verificar llamada a una funcion de una funcion
+                    if ((findCoincidence(code, "(") && findCoincidence(code, ")") || findCoincidence(code, "++") || findCoincidence(code, "--") || findCoincidence(code, "-=") || findCoincidence(code, "+=") || findCoincidence(code, "=")) && findCoincidence(code, ".") && finalLine(code, ';'))
                     {
                         string[] assign = code.Split('.', ';');
-                        string function = " ";
                         string parametro = "";
-                        if (assign[1].Split('(', ')').Length >= 2) parametro = (destroySpace(assign[1].Split('(', ')')[1]));
+                        if (findCoincidence(code, "context")) if (assign[2].Split('(', ')').Length >= 2) parametro = (destroySpace(code.Split('(', ')')[1]));
+                        if (assign[1].Split('(', ')').Length >= 2) parametro = (destroySpace(code.Split('(', ')')[1]));
                         //Funciones directas del context
-                        if (Local_Param_Cards.Contains(parametro) && assign.Length == 4 && destroySpace(assign[0]) == "context" && validateContext(destroySpace(assign[1])) != " ") function = functionContext(assign, parametro, validateContext(destroySpace(assign[1])));
+                        if (Local_Param_Cards.Contains(parametro) && assign.Length == 4 && destroySpace(assign[0]) == "context" && (validateContext(assign[1]) != " " || validateContext(Local_Param_Property[assign[1]]) != " ")) function = functionContext(assign, parametro, validateContext(destroySpace(assign[1])));
                         else if (assign.Length == 4 && destroySpace(assign[0]) == "context") function = functionContext(assign);
                         //Funciones de una variable que contienen una lista del context
-                        else if (Local_Param_Cards.Contains(parametro) && assign.Length == 3 && Local_Param_List.Contains(destroySpace(assign[0]))) function = functionContext(assign, parametro, assign[0], 1);
-                        else if (assign.Length == 3 && Local_Param_List.Contains(destroySpace(assign[0]))) function = functionContext(assign, value: 1);
+                        else if (Local_Param_Cards.Contains(parametro) && assign.Length == 3 && Local_Param_List.ContainsKey(destroySpace(assign[0]))) function = functionContext(assign, parametro, Local_Param_List[assign[0]], 1);
+                        else if (assign.Length == 3 && Local_Param_List.ContainsKey(destroySpace(assign[0]))) function = functionContext(assign, value: 1, list: Local_Param_List[assign[0]]);
                         //Funciones de operador doble con un target.Power
-                        if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && destroySpace(assign[1]) == "Power++") function = "TargetPowerSum|Source";
-                        else if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && destroySpace(assign[1]) == "Power--") function = "TargetPowerRest|Source";
-                        //Leer instrucciones
-                        if (function != " ") Ordenes += function + "-";
-                        else errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerStatament));
+                        if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && destroySpace(assign[1]) == "Power++") function = "TargetPowerSum|Source|";
+                        else if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && destroySpace(assign[1]) == "Power--") function = "TargetPowerRest|Source|";
+                        else if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && assign[1].Contains("Power") && assign[1].Contains("-=")) function = "TargetPowerRestTo|Source|" + assign[1].Split("-=", ';')[1];
+                        else if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && assign[1].Contains("Power") && assign[1].Contains("+=")) function = "TargetPowerSumTo|Source|" + assign[1].Split("+=", ';')[1];
+                        else if (Ordenes.Contains("for") && assign.Length == 3 && destroySpace(assign[0]) == "target" && assign[1].Contains("Power") && assign[1].Contains("=")) function = "TargetAssingTo|Source|" + assign[1].Split("=", ';')[1];
                     }
-                }
 
+                    if (function != " ")
+                    {
+                        Ordenes += function + "-";
+                        function = " ";
+                    }
+                    else if (function == " ") errors.Add(new compilerErrors(Nline, definingErrors.FailedCompilerStatament));
+
+                }
+                //Leer instrucciones
+                else if (finalLine(code, '}') && Ordenes.Contains("for") && !ActionCierre && !EffectCierre && !ForCierre)
+                {
+                    ForCierre = true;
+                }
+                else if (finalLine(code, '}') && !ActionCierre && ForCierre)
+                {
+                    ActionCierre = true;
+                }
+                else if (finalLine(code, '}') && ActionCierre && ForCierre && !EffectCierre)
+                {
+                    EffectCierre = true;
+                }
                 Nline++;
             }
-
+            
             string vars = "";
             foreach (string s in Vars.Keys)
             {
                 vars += s + "|" + Vars[s] + "^";
             }
-            if (Ordenes != " ")
+            if (ActionCierre && EffectCierre && ForCierre)
             {
                 string save = createString(Name, Nline) + "&" + vars + "&" + Ordenes;
                 StreamWriter sw = new(Application.dataPath + "/Resources/Effects/" + createString(Name, Nline) + ".txt");
@@ -1383,7 +1479,7 @@ namespace cardMaker
         }
 
         //Determinar funcion del context
-        private string functionContext(string[] var, string param = " ", string list = "", int value = 2)
+        public string functionContext(string[] var, string param = " ", string list = "", int value = 2)
         {
             if (destroySpace(var[value]) == "Pop()") return "Pop|" + list;
             if (destroySpace(var[value]) == "Remove(" + param + ")") return "Remove|" + list + "|" + param;

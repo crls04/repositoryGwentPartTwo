@@ -385,6 +385,8 @@
 "Assets/Scripts/Deck.cs"
 "Assets/Scripts/Effect.cs"
 "Assets/Scripts/GameManager.cs"
+"Assets/Scripts/initialGame.cs"
+"Assets/Scripts/pushCard.cs"
 "Assets/Scripts/scriptGame/cardsCompiler.cs"
 "Assets/Scripts/scriptGame/compilerOrientation.cs"
 "Assets/Scripts/scriptGame/errorsLex.cs"
